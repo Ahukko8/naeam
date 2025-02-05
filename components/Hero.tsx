@@ -57,8 +57,8 @@ export function Hero() {
             initial={{ x: shape.x, y: shape.y, opacity: 0 }}
             animate={{ x: randomEndPosition().x, y: randomEndPosition().y, opacity: 0.7 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 8, ease: "easeInOut" }}
-            className={`absolute w-20 h-20 ${shape.color} opacity-30 rounded-full`}
+            transition={{ duration: 10, ease: "easeInOut" }}
+            className={`absolute w-10 h-10 ${shape.color} opacity-30 rounded-full`}
           />
         ))}
       </div>
@@ -71,14 +71,14 @@ export function Hero() {
             transition={{ duration: 0.8 }}
             className="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl"
           >
-            <span className="block">Welcome to Our</span>
+            <span className="block">Effortless and reliable services by</span>
             <motion.span
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.3 }}
               className="block text-blue-600"
             >
-              Amazing Platform
+              Naeam.Mv
             </motion.span>
           </motion.h1>
 

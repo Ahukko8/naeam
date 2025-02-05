@@ -1,6 +1,8 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @next/next/no-img-element */
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import { motion } from "framer-motion";
 
 type Product = {
   _id: string;
@@ -12,6 +14,8 @@ type Product = {
 
 export function Products() {
   const [products, setProducts] = useState<Product[]>([]);
+  const [inView, setInView] = useState(false); // State to track visibility
+  const sectionRef = useRef<HTMLDivElement | null>(null); // Ref to observe the section
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -30,24 +34,74 @@ export function Products() {
     fetchProducts();
   }, []);
 
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setInView(entry.isIntersecting); // Set inView based on intersection state
+      },
+      { threshold: 0.5 } // Trigger when 50% of the section is in view
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => {
+      if (sectionRef.current) {
+        observer.unobserve(sectionRef.current);
+      }
+    };
+  }, []);
+
   return (
-    <section id="products" className="py-20 bg-white">
+    <motion.section
+      id="products"
+      className="py-20 bg-white"
+      ref={sectionRef}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: inView ? 1 : 0 }}
+      transition={{ duration: 0.8 }}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center">
-          <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+          <motion.h2
+            className="text-3xl font-extrabold text-gray-900 sm:text-4xl"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: inView ? 1 : 0, y: inView ? 0 : -20 }}
+            transition={{ duration: 0.6 }}
+          >
             Our Products
-          </h2>
-          <p className="mt-4 text-lg text-gray-500">
+          </motion.h2>
+          <motion.p
+            className="mt-4 text-lg text-gray-500"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: inView ? 1 : 0, y: inView ? 0 : -10 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
             Check out our latest collection of amazing products.
-          </p>
+          </motion.p>
         </div>
 
-        <div className="mt-12 grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+        <motion.div
+          className="mt-12 grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+          initial="hidden"
+          animate={inView ? "visible" : "hidden"}
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: { staggerChildren: 0.2 },
+            },
+          }}
+        >
           {products.length > 0 ? (
             products.map((product) => (
-              <div
+              <motion.div
                 key={product._id}
                 className="bg-white rounded-lg shadow-lg overflow-hidden"
+                initial={{ opacity: 0, y: 20 }}
+                animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                transition={{ duration: 0.5 }}
               >
                 <img
                   src={product.image}
@@ -61,18 +115,29 @@ export function Products() {
                     <span className="text-xl font-bold text-gray-900">
                       ${product.price}
                     </span>
-                    <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                    >
                       Add to Cart
-                    </button>
+                    </motion.button>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             ))
           ) : (
-            <p className="text-center text-gray-500">No products available</p>
+            <motion.p
+              className="text-center text-gray-500"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: inView ? 1 : 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              No products available
+            </motion.p>
           )}
-        </div>
+        </motion.div>
       </div>
-    </section>
+    </motion.section>
   );
 }
