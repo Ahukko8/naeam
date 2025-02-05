@@ -1,27 +1,28 @@
-"use client"
+"use client";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-
-const randomStartPosition = () => ({
-  x: Math.random() > 0.5 ? -100 : window.innerWidth + 100,
-  y: Math.random() * window.innerHeight,
-});
-
-const randomEndPosition = () => ({
-  x: Math.random() > 0.5 ? window.innerWidth + 100 : -100,
-  y: Math.random() * window.innerHeight,
-});
 
 const colors = ["bg-blue-500", "bg-red-500", "bg-green-500", "bg-yellow-500", "bg-purple-500"];
 
 export function Hero() {
-  const [shapes, setShapes] = useState(
-    Array.from({ length: 5 }, () => ({ ...randomStartPosition(), color: colors[Math.floor(Math.random() * colors.length)] }))
-  );
+  const [shapes, setShapes] = useState<{ x: number; y: number; color: string }[]>([]);
+
+  // Function to generate random positions (only runs in the browser)
+  const generateShapes = () => {
+    if (typeof window === "undefined") return [];
+
+    return Array.from({ length: 5 }, () => ({
+      x: Math.random() > 0.5 ? -100 : window.innerWidth + 100,
+      y: Math.random() * window.innerHeight,
+      color: colors[Math.floor(Math.random() * colors.length)],
+    }));
+  };
 
   useEffect(() => {
+    setShapes(generateShapes()); // Set initial shapes after mount
+
     const interval = setInterval(() => {
-      setShapes(Array.from({ length: 5 }, () => ({ ...randomStartPosition(), color: colors[Math.floor(Math.random() * colors.length)] })));
+      setShapes(generateShapes());
     }, 5000);
 
     return () => clearInterval(interval);
@@ -42,10 +43,7 @@ export function Hero() {
               <stop offset="100%" style={{ stopColor: '#2563eb', stopOpacity: 0.1 }} />
             </linearGradient>
           </defs>
-          <path
-            fill="url(#gradient)"
-            d="M0,0V600H1440V0C1200,300,600,300,0,0Z"
-          />
+          <path fill="url(#gradient)" d="M0,0V600H1440V0C1200,300,600,300,0,0Z" />
         </svg>
       </div>
 
@@ -55,7 +53,7 @@ export function Hero() {
           <motion.div
             key={index}
             initial={{ x: shape.x, y: shape.y, opacity: 0 }}
-            animate={{ x: randomEndPosition().x, y: randomEndPosition().y, opacity: 0.7 }}
+            animate={{ x: Math.random() > 0.5 ? window.innerWidth + 100 : -100, y: Math.random() * window.innerHeight, opacity: 0.7 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 10, ease: "easeInOut" }}
             className={`absolute w-10 h-10 ${shape.color} opacity-30 rounded-full`}
