@@ -8,13 +8,13 @@ import { Navbar } from '@/components/Navbar'
 import { Products } from '@/components/Products'
 
 export default async function Home() {
-  // const products = await getProducts()
+
   
   return (
     <main className="min-h-screen">
       <Navbar />
       <Hero />
-      <Products products={[]} />
+      <Products/>
       <About />
       <Contact />
       <Footer />
